@@ -1,8 +1,11 @@
 package com.example.sara.bookstoreapi;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -23,7 +26,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
+    final String MyPREFERENCES = "MyPrefs";
+    SharedPreferences session;
 
     @Override
     public void onClick(View v) {
@@ -115,13 +123,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 queue2.add(stringRequest2);
 
                 break;*/
-            case (R.id.creerProduit):
+          /*  case (R.id.creerProduit):
                 Intent fenetreCreerProduit = new Intent(this, CreationProduitActivity.class);
                 startActivity(fenetreCreerProduit);
-                break;
-            case (R.id.listeTestButton):
+                break; */
+            case (R.id.buttonNoConnexion):
                 Intent fenetreVoirProduits = new Intent(this, ListeProduitsActivity.class);
                 startActivity(fenetreVoirProduits);
+                break;
+            case(R.id.buttonConnexion):
+                //on exécute la requête post
+                // Instantiate the RequestQueue.
+                RequestQueue queue = Volley.newRequestQueue(this);
+                String ip = "192.168.43.224:8000";
+                String url = "http://"+ip+"/Api/Connexion";
+                // Request a string response from the provided URL.
+                StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                        new Response.Listener<String>()
+                        {
+                            @Override
+                            public void onResponse(String response) {
+                                // response
+                                if(response.equals("identifiant ou mot de passe invalide !")){
+                                    TextView res = findViewById(R.id.textViewRes);
+                                    res.setText(response);
+                                } else {
+                                    try {
+                                        JSONObject reponse = null;
+                                        reponse = new JSONObject(response);
+                                        //Intent intentSucces = new Intent(connexion, MenuConnecter.class);
+                                        SharedPreferences session = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+                                        //recup info
+                                        //session.getString("id", null);
+                                        SharedPreferences.Editor edit = session.edit();
+                                        edit.putString("pseudo", reponse.get("pseudo").toString());
+                                        edit.putString("id", reponse.get("id").toString());
+
+                                        //enregistrer session
+                                        edit.commit();
+
+                                        //startActivity(intentSucces);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        },
+                        new Response.ErrorListener()
+                        {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                // error
+                                Log.d("Error.Response", String.valueOf(error));
+                            }
+                        }
+                ) {
+                    @Override
+                    protected Map<String, String> getParams()
+                    {
+                        TextView id = findViewById(R.id.editTextUser);
+                        TextView mdp = findViewById(R.id.editTextPassword);
+                        String username = id.getText().toString();
+                        String password = mdp.getText().toString();
+                        Map<String, String>  params = new HashMap<String, String>();
+                        params.put("username", username );
+                        params.put("password", password);
+
+                        return params;
+                    }
+                };
+                queue.add(postRequest);
                 break;
         }
     }
