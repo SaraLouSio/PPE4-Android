@@ -144,25 +144,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onResponse(String response) {
                                 // response
+                                TextView res = findViewById(R.id.textViewRes);
                                 if(response.equals("identifiant ou mot de passe invalide !")){
-                                    TextView res = findViewById(R.id.textViewRes);
                                     res.setText(response);
                                 } else {
                                     try {
+                                      //  res.setText("Test 02");
+                                       // res.setText(response);
                                         JSONObject reponse = null;
                                         reponse = new JSONObject(response);
-                                        //Intent intentSucces = new Intent(connexion, MenuConnecter.class);
+                                        Intent intentSucces = new Intent(MainActivity.this, ListeProduitsActivity.class);
                                         SharedPreferences session = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
                                         //recup info
                                         //session.getString("id", null);
                                         SharedPreferences.Editor edit = session.edit();
-                                        edit.putString("pseudo", reponse.get("pseudo").toString());
                                         edit.putString("id", reponse.get("id").toString());
 
                                         //enregistrer session
                                         edit.commit();
 
-                                        //startActivity(intentSucces);
+                                        res.setText("Connexion réussie");
+
+                                        startActivity(intentSucces);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
