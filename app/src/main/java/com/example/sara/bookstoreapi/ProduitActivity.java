@@ -1,8 +1,12 @@
 package com.example.sara.bookstoreapi;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -16,13 +20,26 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.net.URL;
+
 public class ProduitActivity extends AppCompatActivity {
     TextView textProduit ;
+    ImageView imgProduit;
+    TextView textPrix ;
+    TextView textStock ;
+    TextView textDescription ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_produit);
         textProduit = findViewById(R.id.textViewNomProduit);
+        textPrix = findViewById(R.id.textViewPrix);
+        textStock = findViewById(R.id.textViewStock);
+        textDescription = findViewById(R.id.textViewDescription);
+
+        imgProduit = findViewById(R.id.imageViewProduit);
 
         Bundle extras  = getIntent().getExtras();
         String idProduit;
@@ -32,7 +49,7 @@ public class ProduitActivity extends AppCompatActivity {
 
 
             RequestQueue queue2 = Volley.newRequestQueue(this);
-            String url2 = "http://192.168.43.224:8000/apiGet/produit/"+idProduit;
+            String url2 = "http://act1louafisara.cnadal.fr/apiGet/produit/"+idProduit;
             // Request a string response from the provided URL.
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url2,
                     new Response.Listener<String>() {
@@ -47,9 +64,20 @@ public class ProduitActivity extends AppCompatActivity {
                                 // JSONObject item = jsonArray.getJSONObject(0);
                                 String id = item.getString("proId");
                                 String nom = item.getString("proNom");
+                                String imgURL = item.getString("proImage");
+                                String stock = item.getString("proStock");
+                                String resume = item.getString("proResume");
+                                String prix = item.getString("proPrix");
 
-                              //  Log.d("nom", nom);
+
+
+
+                                //  Log.d("nom", nom);
                                 textProduit.setText(nom);
+                                textPrix.setText(prix);
+                                textDescription.setText(resume);
+                                textStock.setText(stock);
+                                new DownLoadImageTask(imgProduit).execute(imgURL);
 
                                  //   String prix = item.getString("proPrix");
 
@@ -68,4 +96,42 @@ public class ProduitActivity extends AppCompatActivity {
             // and get whatever type user account id is
         }
     }
+    private class DownLoadImageTask extends AsyncTask<String,Void,Bitmap>{
+        ImageView imageView;
+
+        public DownLoadImageTask(ImageView imageView){
+            this.imageView = imageView;
+        }
+
+        /*
+            doInBackground(Params... params)
+                Override this method to perform a computation on a background thread.
+         */
+        protected Bitmap doInBackground(String...urls){
+            String urlOfImage = urls[0];
+            Bitmap logo = null;
+            try{
+                InputStream is = new URL(urlOfImage).openStream();
+                /*
+                    decodeStream(InputStream is)
+                        Decode an input stream into a bitmap.
+                 */
+                logo = BitmapFactory.decodeStream(is);
+            }catch(Exception e){ // Catch the download exception
+                e.printStackTrace();
+            }
+            return logo;
+        }
+
+        /*
+            onPostExecute(Result result)
+                Runs on the UI thread after doInBackground(Params...).
+         */
+        protected void onPostExecute(Bitmap result){
+            imageView.setImageBitmap(result);
+        }
+    }
 }
+
+
+

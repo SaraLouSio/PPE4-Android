@@ -46,7 +46,7 @@ public class ListeProduitsActivity extends AppCompatActivity {
         //on exécute la requête get
         // Instantiate the RequestQueue.
         RequestQueue queue2 = Volley.newRequestQueue(this);
-        String url2 = "http://192.168.43.224:8000/apiGet/produits/all";
+        String url2 = "http://act1louafisara.cnadal.fr/apiGet/produits/all";
         // Request a string response from the provided URL.
         StringRequest stringRequest2 = new StringRequest(Request.Method.GET, url2,
                 new Response.Listener<String>() {

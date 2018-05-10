@@ -135,7 +135,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //on exécute la requête post
                 // Instantiate the RequestQueue.
                 RequestQueue queue = Volley.newRequestQueue(this);
-                String ip = "192.168.43.224:8000";
+               // String ip = "192.168.43.224:8000";
+                String ip = "act1louafisara.cnadal.fr";
                 String url = "http://"+ip+"/Api/Connexion";
                 // Request a string response from the provided URL.
                 StringRequest postRequest = new StringRequest(Request.Method.POST, url,
