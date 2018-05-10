@@ -67,7 +67,7 @@ public class ListeProduitsActivity extends AppCompatActivity {
                                 String id = item.getString("proId");
                                 String nom = item.getString("proNom");
                                 String prix = item.getString("proPrix");
-                                lesProduits[i] = nom + " - " + prix + "€"; //attention erreur ici à corriger.
+                                lesProduits[i] = nom ;
                                 lesIdProduits[i] = id;
                                 System.out.println("nom" + nom + "/");
                             }

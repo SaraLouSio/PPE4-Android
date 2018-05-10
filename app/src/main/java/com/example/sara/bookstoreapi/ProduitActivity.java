@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,6 +39,8 @@ public class ProduitActivity extends AppCompatActivity {
         textPrix = findViewById(R.id.textViewPrix);
         textStock = findViewById(R.id.textViewStock);
         textDescription = findViewById(R.id.textViewDescription);
+
+        textDescription.setMovementMethod(new ScrollingMovementMethod());
 
         imgProduit = findViewById(R.id.imageViewProduit);
 
@@ -74,10 +77,11 @@ public class ProduitActivity extends AppCompatActivity {
 
                                 //  Log.d("nom", nom);
                                 textProduit.setText(nom);
-                                textPrix.setText(prix);
+                                textPrix.setText("Prix : "+prix+" €");
                                 textDescription.setText(resume);
-                                textStock.setText(stock);
+                                textStock.setText(stock+" en stock");
                                 new DownLoadImageTask(imgProduit).execute(imgURL);
+
 
                                  //   String prix = item.getString("proPrix");
 
