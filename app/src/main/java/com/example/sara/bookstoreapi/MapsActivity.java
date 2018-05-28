@@ -45,7 +45,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng store2 = new LatLng(43.3178442,3.4718207);
         mMap.addMarker(new MarkerOptions().position(store2).title("Magasin 2"));
         LatLng store3 = new LatLng(43.6049075,3.8808406);
-        mMap.addMarker(new MarkerOptions().position(store2).title("Magasin 3"));
+        mMap.addMarker(new MarkerOptions().position(store3).title("Magasin 3"));
 
     }
 }

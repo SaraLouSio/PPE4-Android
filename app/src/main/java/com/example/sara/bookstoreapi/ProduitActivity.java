@@ -1,5 +1,8 @@
 package com.example.sara.bookstoreapi;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -7,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +34,7 @@ public class ProduitActivity extends AppCompatActivity {
     TextView textPrix ;
     TextView textStock ;
     TextView textDescription ;
+    String idProduit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +50,14 @@ public class ProduitActivity extends AppCompatActivity {
         imgProduit = findViewById(R.id.imageViewProduit);
 
         Bundle extras  = getIntent().getExtras();
-        String idProduit;
+
+
+        SharedPreferences session = getSharedPreferences("MyPrefs",Context.MODE_PRIVATE);
+        String id_user  = session.getString("id", null);
+        if(id_user==null){
+            View b = findViewById(R.id.buttonPanier);
+            b.setVisibility(View.GONE);
+        }
 
         if (extras != null) {
             idProduit = extras.getString("idProduit");
@@ -133,6 +145,34 @@ public class ProduitActivity extends AppCompatActivity {
          */
         protected void onPostExecute(Bitmap result){
             imageView.setImageBitmap(result);
+        }
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case (R.id.buttonPanier):
+                Log.d("button","test Ok");
+                SharedPreferences session = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                String id_user = session.getString("id", null);
+                if (id_user != null) {
+                    Log.d("id user",id_user);
+                    RequestQueue queue = Volley.newRequestQueue(this);
+                    String url2 = "http://act1louafisara.cnadal.fr/apiPanier/ajouter/"+id_user+"/"+idProduit ;
+                    // Request a string response from the provided URL.
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET, url2,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                        Intent intentSucces = new Intent(ProduitActivity.this, PanierActivity.class);
+                                        startActivity(intentSucces);
+                                    }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                        }
+                    });
+                    queue.add(stringRequest);
+                } break;
         }
     }
 }

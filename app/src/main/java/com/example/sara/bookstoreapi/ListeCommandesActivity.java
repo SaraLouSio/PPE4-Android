@@ -5,15 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,59 +21,50 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ListeProduitsActivity extends AppCompatActivity {
-
-    String[] lesIdProduits = {};
+public class ListeCommandesActivity extends AppCompatActivity {
+    String[] lesIdCommandes = {};
+    String[] lesDatesCommandes = {};
     ListView lst;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_liste_produits);
-
-        //get the spinner from the xml.
-        Spinner dropdown = findViewById(R.id.spinner_categorie);
-        //create a list of items for the spinner.
+        setContentView(R.layout.activity_liste_commandes);
         String[] items = new String[]{};
-        //create an adapter to describe how the items are displayed, adapters are used in several places in android.
-        //There are multiple variations of this, but this is the basic variant.
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
-        //set the spinners adapter to the previously created one.
-        dropdown.setAdapter(adapter);
 
-
-        //on exécute la requête get
-        // Instantiate the RequestQueue.
+        SharedPreferences session = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String id_user  = session.getString("id", null);
         RequestQueue queue2 = Volley.newRequestQueue(this);
-        String url2 = "http://act1louafisara.cnadal.fr/apiGet/produits/all";
+        String url2 = "http://act1louafisara.cnadal.fr/apiGetCommandes/"+id_user;
         // Request a string response from the provided URL.
         StringRequest stringRequest2 = new StringRequest(Request.Method.GET, url2,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
 
-                        lst = (ListView) findViewById(R.id.listViewProduits);
-                        String[] lesProduits = {};
+                        lst = (ListView) findViewById(R.id.listViewCommandes);
+                        String[] lesCommandes = {};
 
                         JSONArray jsonArray = null;
                         try {
                             jsonArray = new JSONArray(response);
-                            lesProduits = new String[jsonArray.length()];
-                            lesIdProduits = new String[jsonArray.length()];
+                            lesCommandes = new String[jsonArray.length()];
+                            lesIdCommandes = new String[jsonArray.length()];
+                            lesDatesCommandes = new String[jsonArray.length()];
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject item = jsonArray.getJSONObject(i);
-                                String id = item.getString("proId");
-                                String nom = item.getString("proNom");
-                                String prix = item.getString("proPrix");
-                                lesProduits[i] = nom ;
-                                lesIdProduits[i] = id;
-                                System.out.println("nom" + nom + "/");
+                                String id = item.getString("comId");
+                                String date = item.getString("comDate").substring(0,10);
+                                lesCommandes[i] = id + " : "+date ;
+                                lesIdCommandes[i] = id;
+                                lesDatesCommandes[i] = date;
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
                         //Remplissage de la listview
-                        ArrayAdapter<String> arrayadapter = new ArrayAdapter<String>(ListeProduitsActivity.this, android.R.layout.simple_list_item_1, lesProduits);
+                        ArrayAdapter<String> arrayadapter = new ArrayAdapter<String>(ListeCommandesActivity.this, android.R.layout.simple_list_item_1, lesCommandes);
                         lst.setAdapter(arrayadapter);
 
 
@@ -86,14 +72,17 @@ public class ListeProduitsActivity extends AppCompatActivity {
                         lst.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                Intent intent = new Intent(ListeProduitsActivity.this, ProduitActivity.class);
+                                Intent intent = new Intent(ListeCommandesActivity.this, CommandeActivity.class);
 
                                 //String value = lst.getAdapter().getItem(position).toString();
 
-                                String idProduit = lesIdProduits[position];
+                                String idCommande = lesIdCommandes[position];
+                                String dateCommande = lesDatesCommandes[position];
 
-                                intent.putExtra("idProduit", idProduit);
-                               // intent.putExtra("id", id);
+                                intent.putExtra("idCommande", idCommande);
+                                intent.putExtra("dateCommande", dateCommande);
+
+                                // intent.putExtra("id", id);
 
 
                                 startActivity(intent);
@@ -112,20 +101,5 @@ public class ListeProduitsActivity extends AppCompatActivity {
         });
         // Add the request to the RequestQueue.
         queue2.add(stringRequest2);
-    }
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-      /*  if (id == R.id.action_settings) {
-            return true;
-        }*/
-        return super.onOptionsItemSelected(item);
     }
 }
