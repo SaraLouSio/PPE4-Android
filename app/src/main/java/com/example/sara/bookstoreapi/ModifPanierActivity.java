@@ -54,8 +54,7 @@ public class ModifPanierActivity extends AppCompatActivity {
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                    Intent intentSucces = new Intent(ModifPanierActivity.this, PanierActivity.class);
-                                    startActivity(intentSucces);
+
                                     finish();
                                 }
                             }, new Response.ErrorListener() {

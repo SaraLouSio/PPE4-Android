@@ -54,7 +54,7 @@ public class PanierActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("response", response);
+
 
                         lst = (ListView) findViewById(R.id.listViewPanier);
                         String[] lesProduits = {};
@@ -146,11 +146,9 @@ public class PanierActivity extends AppCompatActivity {
     public void onClick(View v) {
         switch (v.getId()) {
             case (R.id.buttonValidPanier):
-                Log.d("button","test Ok");
                 SharedPreferences session = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                 String id_user = session.getString("id", null);
                 if (id_user != null) {
-                    Log.d("id user",id_user);
                     RequestQueue queue = Volley.newRequestQueue(this);
                     String url2 = "http://act1louafisara.cnadal.fr/apiValiderPanier/"+id_user ;
                     // Request a string response from the provided URL.
@@ -158,8 +156,7 @@ public class PanierActivity extends AppCompatActivity {
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                    Intent intentSucces = new Intent(PanierActivity.this, ListeCommandesActivity.class);
-                                    startActivity(intentSucces);
+                                    onRestart();
                                 }
                             }, new Response.ErrorListener() {
                         @Override

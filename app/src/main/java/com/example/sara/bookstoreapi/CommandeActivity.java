@@ -59,11 +59,11 @@ public class CommandeActivity extends AppCompatActivity {
                             lesIdProduits = new String[jsonArray.length()];
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject item = jsonArray.getJSONObject(i);
-                                JSONObject produit = item.getJSONObject("idProduit");
+                                JSONObject produit = item.getJSONObject("proId");
                                 String nom = produit.getString("proNom");
                                 String id = produit.getString("proId");
                                 String prix = item.getString("contenuPrix");
-                                String quantite = item.getString("quantite");
+                                String quantite = item.getString("contenuQuantite");
 
                                 lesCommandes[i] = nom + ", "+ prix +"€, quantité : "+ quantite + " Total = " + Double.parseDouble(prix)*Double.parseDouble(quantite) ;
 
